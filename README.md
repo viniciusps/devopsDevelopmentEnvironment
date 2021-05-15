@@ -1,6 +1,7 @@
 Sources:
 
 https://gist.github.com/vfarcic/84324e2d6eb1e62e3569846a741cedea
+
 https://github.com/mintel/vagrant-minikube
 
 # devopsDevelopmentEnvironment
