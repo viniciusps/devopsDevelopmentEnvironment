@@ -45,7 +45,7 @@ kubectl get nodes
 ```
 echo "ArgoCD password: $(kubectl -n argocd get pods --selector app.kubernetes.io/name=argocd-server --output name | cut -d'/' -f 2)"
 echo "ArgoCD user: admin"
-echo "ArgoCD url: $()"
+echo "ArgoCD url: https://$(kubectl get ing -n argocd -o jsonpath="{.items[].spec.rules[].host}")"
 ```
 
 ## Access your code inside the VM
