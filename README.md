@@ -1,7 +1,4 @@
-Sources:
 
-https://gist.github.com/vfarcic/84324e2d6eb1e62e3569846a741cedea
-https://github.com/mintel/vagrant-minikube
 
 # devopsDevelopmentEnvironment
 
@@ -58,3 +55,9 @@ Automatically mounts `/tmp/vagrant` into `/home/vagrant/data`.
 For example, you may want to `git clone` some kubernetes manifests into `/tmp/vagrant` on your host-machine, then you can access them in the vagrant machine.
 
 This is bi-directional, and achieved via [vagrant-sshfs](https://github.com/dustymabe/vagrant-sshfs)
+
+## Sources:
+
+* https://gist.github.com/vfarcic/84324e2d6eb1e62e3569846a741cedea
+
+* https://github.com/mintel/vagrant-minikube
