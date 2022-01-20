@@ -1,7 +1,6 @@
 Sources:
 
 https://gist.github.com/vfarcic/84324e2d6eb1e62e3569846a741cedea
-
 https://github.com/mintel/vagrant-minikube
 
 # devopsDevelopmentEnvironment
@@ -10,6 +9,9 @@ By running vagrant up, it will get you up and running with:
 
 * Kubernetes cluster running on minikube
 * ArgoCD + Argocd Cli
+* Kafka cluster using Strimzi Operator
+* Kafka dashboard
+* KafkaCat Cli
 
 ## Install Pre-requisites
 
@@ -25,8 +27,9 @@ https://www.virtualbox.org/wiki/Downloads
 
 Clone this repo then:
 
+MacOS only:
 ```
-vagrant up
+./run-mac.sh
 ```
 
 ## SSH into the VM
@@ -45,12 +48,12 @@ kubectl get nodes
 ```
 echo "ArgoCD password: $(kubectl -n argocd get pods --selector app.kubernetes.io/name=argocd-server --output name | cut -d'/' -f 2)"
 echo "ArgoCD user: admin"
-echo "ArgoCD url: https://$(kubectl get ing -n argocd -o jsonpath="{.items[].spec.rules[].host}")"
+echo "ArgoCD url: $()"
 ```
 
 ## Access your code inside the VM
 
-We automatically mount `/tmp/vagrant` into `/home/vagrant/data`.
+Automatically mounts `/tmp/vagrant` into `/home/vagrant/data`.
 
 For example, you may want to `git clone` some kubernetes manifests into `/tmp/vagrant` on your host-machine, then you can access them in the vagrant machine.
 

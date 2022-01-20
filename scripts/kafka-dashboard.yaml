@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-dashboard
+  namespace: argocd
+spec:
+  destination:
+    namespace: kafka-dev
+    server: https://kubernetes.default.svc
+  project: default
+  syncPolicy:
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+  source:
+    repoURL: https://akhq.io/
+    chart: akhq
+    targetRevision: 0.2.6
+    helm:
+      values: |-
+        ingress:
+          enabled: true
+          #ingressClassName: ""
+          annotations:
+            kubernetes.io/ingress.class: nginx
+          paths:
+            - /
+          hosts:
+            - kafka-dashboard.INGRESS_IP
+        
+        extraEnv:
+        - name: JAVA_OPTS
+          value: -Dlog4j2.formatMsgNoLookups=true
+        - name: TRUSTSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kafka-dev-cluster-cluster-ca-cert 
+              key: ca.password
+
+        extraVolumeMounts:
+          - name: truststore
+            mountPath: /tls/truststore
+            readOnly: true
+
+        extraVolumes:
+          - name: truststore
+            secret:
+              secretName: kafka-dev-cluster-cluster-ca-cert 
+
+        secrets:
+          akhq:
+            connections:
+              default:
+                properties:
+                  bootstrap.servers: 'kafka-dev-cluster-kafka-bootstrap'
+                  security.protocol: SSL
+                  ssl.truststore.type: PKCS12
+                  ssl.truststore.location: /tls/truststore/ca.p12
+                  ssl.truststore.password: ${TRUSTSTORE_PASSWORD}
+
+                # connect:
+                #   - name: '{{ template "kafka.fullname" . }}'
+                #     url: 'http://{{ template "kafka.fullname.connect" . }}-api:8083'

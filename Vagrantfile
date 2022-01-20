@@ -45,7 +45,6 @@ def configureVM(vmCfg, hostname, cpus, mem, srcdir, dstdir)
   # sync your laptop's development with this Vagrant VM
   vmCfg.vm.synced_folder srcdir, dstdir, type: "rsync", rsync__exclude: ".git/", create: true
 
-  # First Provider - Libvirt
   vmCfg.vm.provider "virtualbox" do |provider, override|
     provider.memory = mem
     provider.cpus = cpus
@@ -72,6 +71,7 @@ def configureVM(vmCfg, hostname, cpus, mem, srcdir, dstdir)
   vmCfg.vm.provision "shell", inline: "/home/vagrant/start_minikube.sh", privileged: false, env: {"KUBERNETES_VERSION" => KUBERNETES_VERSION}
   vmCfg.vm.provision "shell", path: "scripts/minikube_ingress.sh", privileged: false
   vmCfg.vm.provision "shell", path: "scripts/install_argocd.sh", privileged: false
+  vmCfg.vm.provision "shell", path: "scripts/install_strimzi.sh", privileged: false
   vmCfg.vm.provision "shell", inline: "/home/vagrant/stop_minikube.sh", privileged: false
 
   return vmCfg
@@ -83,7 +83,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vbguest.auto_update = false
 
   1.upto(NODES.to_i) do |i|
-    hostname = "minikube-vagrant-%02d" % [i]
+    hostname = ENV['VAGRANT_HOSTNAME'].to_s + "-%02d" % [i]
     cpus = CPUS
     mem = MEM
     srcdir = SRCDIR
