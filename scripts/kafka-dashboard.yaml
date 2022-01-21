@@ -52,7 +52,7 @@ spec:
             connections:
               default:
                 properties:
-                  bootstrap.servers: 'kafka-dev-cluster-kafka-bootstrap'
+                  bootstrap.servers: 'kafka-dev-cluster-kafka-bootstrap:9093'
                   security.protocol: SSL
                   ssl.truststore.type: PKCS12
                   ssl.truststore.location: /tls/truststore/ca.p12

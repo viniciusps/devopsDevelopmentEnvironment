@@ -14,13 +14,13 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: kafka
+    namespace: kafka-system
     server: https://kubernetes.default.svc
   project: default
   syncPolicy:
-    syncOptions:
-      - ApplyOutOfSyncOnly=true
-      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
   source:
     repoURL: https://strimzi.io/charts/
     chart: strimzi-kafka-operator
@@ -88,7 +88,7 @@ sleep 30
 
 INGRESS_IP=$(cat /home/vagrant/ingress_ip.txt)
 
-cat << EOF > kafka-dashboard.yaml
+cat << 'EOF' > kafka-dashboard.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -100,9 +100,9 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   syncPolicy:
-    syncOptions:
-      - ApplyOutOfSyncOnly=true
-      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
   source:
     repoURL: https://akhq.io/
     chart: akhq
@@ -117,7 +117,7 @@ spec:
           paths:
             - /
           hosts:
-            - kafka-dashboard.INGRESS_IP
+            - kafka-dashboard.INGRESS_IP.nip.io
         
         extraEnv:
         - name: JAVA_OPTS
@@ -143,14 +143,14 @@ spec:
             connections:
               default:
                 properties:
-                  bootstrap.servers: 'kafka-dev-cluster-kafka-bootstrap'
+                  bootstrap.servers: 'kafka-dev-cluster-kafka-bootstrap:9093'
                   security.protocol: SSL
                   ssl.truststore.type: PKCS12
                   ssl.truststore.location: /tls/truststore/ca.p12
                   ssl.truststore.password: ${TRUSTSTORE_PASSWORD}
 EOF
 
-sed -i -e s/INGRESS_IP/$INGRESS_IP/ scripts/kafka-dashboard.yaml 
+sed -i -e s/INGRESS_IP/$INGRESS_IP/ kafka-dashboard.yaml 
 
 kubectl apply -f kafka-dashboard.yaml 
 
@@ -168,10 +168,12 @@ EOF
 
 kubectl apply -f kafka-topic.yaml
 
-sudo apt-get update && sudo apt-get install kafka-cat -y 
+sudo apt-get update && sudo apt-get install kafkacat -y 
 
 sleep 30
 
-echo "Message from kafkacat 2" | kafkacat -b localhost:31091 -t hip-topic
+# BROKER_PORT=$(kubectl get svc -n kafka-dev | grep kafka-dev-cluster-kafka-0 | awk '{print $5}' | cut -d: -f2|cut -d/ -f1)
 
-kafkacat -b localhost:31091 -t hip-topic -C
+# echo "Message from kafkacat" | kafkacat -b localhost:$BROKER_PORT -t hip-topic
+
+# kafkacat -b localhost:$BROKER_PORT -t hip-topic -C

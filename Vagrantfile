@@ -8,8 +8,8 @@ Vagrant.require_version ">= 2.0.0"
 NODES = ENV['NODES'] || 1
 
 # Memory & CPUs
-MEM = ENV['MEM'] || 4096
-CPUS = ENV['CPUS'] || 2
+MEM = ENV['MEM'] || 8000
+CPUS = ENV['CPUS'] || 4
 
 # User Data Mount
 #SRCDIR = ENV['SRCDIR'] || "/home/"+ENV['USER']+"/test"

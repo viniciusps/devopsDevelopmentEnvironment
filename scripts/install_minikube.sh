@@ -4,7 +4,7 @@ sudo apt install conntrack -y
 
 #Install minikube
 echo "Downloading Minikube"
-curl -q -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 2>/dev/null
+curl -q -Lo minikube https://storage.googleapis.com/minikube/releases/v1.24.0/minikube-linux-amd64 2>/dev/null
 chmod +x minikube
 sudo mv minikube /usr/local/bin/
 
@@ -29,7 +29,7 @@ export KUBECONFIG=$HOME/.kube/config
 cat << EOF > /home/vagrant/start_minikube.sh
 #!/bin/bash
 
-sudo -E minikube start -v 4 --vm-driver none --kubernetes-version v${KUBERNETES_VERSION} --bootstrapper kubeadm 2>/dev/null
+sudo -E minikube start -v 4 --memory=6g --cpus=4 --vm-driver none --kubernetes-version v${KUBERNETES_VERSION} --bootstrapper kubeadm 2>/dev/null
 
 # Permissions
 sudo chown -R $USER:$USER $HOME/.kube
