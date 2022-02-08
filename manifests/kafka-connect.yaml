@@ -1,0 +1,70 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: kafka-connect-cluster
+  namespace: kafka-dev
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  replicas: 1
+  authentication:
+    type: tls
+    certificateAndKey:
+      certificate: user.crt
+      key: user.key
+      secretName: kafka-dev-connect
+  bootstrapServers: kafka-dev-cluster-kafka-bootstrap:9093
+  tls:
+    trustedCertificates:
+      - secretName: kafka-dev-cluster-cluster-ca-cert
+        certificate: ca.crt
+  config:
+    group.id: kafka-connect-cluster
+    offset.storage.topic: kafka-connect-cluster-offsets
+    config.storage.topic: kafka-connect-cluster-configs
+    status.storage.topic: kafka-connect-cluster-status
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter.schemas.enable: true
+    value.converter.schemas.enable: true
+    config.storage.replication.factor: 3
+    offset.storage.replication.factor: 3
+    status.storage.replication.factor: 3
+  build:
+
+    output:
+      type: docker
+      image: viniciussilva/kafka-connect-cluster:latest
+      pushSecret: docker-creds
+    plugins:
+      - name: voluble-connector
+        artifacts:
+          - type: jar
+            url: https://repo.clojars.org/io/mdrogalis/voluble/0.3.1/voluble-0.3.1.jar
+            sha512sum: ba7741c39ae8964df80f5040d86cfd5f2e7e792e97c1d519f535a5f564a2be1f81edb88c007d3ecad4241906ec6489b9bf03199789b1b6caccf3bbf96e2b4675
+          - type: jar
+            url: https://repo1.maven.org/maven2/org/clojure/clojure/1.10.1/clojure-1.10.1.jar
+            sha512sum: f28178179483531862afae13e246386f8fda081afa523d3c4ea3a083ab607d23575d38ecb9ec0ee7f4d65cbe39a119f680e6de4669bc9cf593aa92be0c61562b
+          - type: jar
+            url: https://repo1.maven.org/maven2/org/clojure/spec.alpha/0.2.176/spec.alpha-0.2.176.jar
+            sha512sum: 18c97fb2b74c0bc2ff4f6dc722a3edec539f882ee85d0addf22bbf7e6fe02605d63f40c2b8a2905868ccd6f96cfc36a65f5fb70ddac31c6ec93da228a456edbd
+          - type: jar
+            url: https://repo1.maven.org/maven2/org/clojure/core.specs.alpha/0.2.44/core.specs.alpha-0.2.44.jar
+            sha512sum: 348c0ea0911bc0dcb08655e61b97ba040649b4b46c32a62aa84d0c29c245a8af5c16d44a4fa5455d6ab076f4bb5bbbe1ad3064a7befe583f13aeb9e32a169bf4
+          - type: jar
+            url: https://repo1.maven.org/maven2/com/github/javafaker/javafaker/1.0.2/javafaker-1.0.2.jar
+            sha512sum: a03c58e20dab320c6fbee5a6c20f7c57d1a603a0aeb02e8b62230deacb0250a6e6f51fe40188951c3e7f8e4e9a5e3f4bbc00585d3edd325e57e119d32a29b1fc
+          - type: jar
+            url: https://repo1.maven.org/maven2/com/github/mifmif/generex/1.0.2/generex-1.0.2.jar
+            sha512sum: a0993c16f82bd0ce6072f4bea6d001a49e9203b35290f10c6a3f2b2dd385f08302b4531a0a825ad5c000826369aba828ab8fad49fcefca4d7351a8e0d825b9a8
+          - type: jar
+            url: https://repo1.maven.org/maven2/com/github/mifmif/generex/1.0.2/generex-1.0.2.jar
+            sha512sum: a0993c16f82bd0ce6072f4bea6d001a49e9203b35290f10c6a3f2b2dd385f08302b4531a0a825ad5c000826369aba828ab8fad49fcefca4d7351a8e0d825b9a8
+          - type: jar
+            url: https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar
+            sha512sum: 9e6ff20e891b6835d5926c90f237d55931e75723c8b88d6417926393e077e71013dab006372d34a6b5801e6ca3ce080a00f202cba700cab5aabfc17bbbdcab36
+          - type: jar
+            url: https://repo1.maven.org/maven2/org/yaml/snakeyaml/1.23/snakeyaml-1.23.jar
+            sha512sum: 8091467927dc88fe2741f85c6e429914f4306e7a1183e52090ccc7d617ca5279ba42b03ffc8cd1a914b6c3dc4151bd731757e72592e9c1b23346781936ac9fc7
+
+

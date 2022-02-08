@@ -1,0 +1,23 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  labels:
+    strimzi.io/cluster: kafka-connect-cluster
+  name: kafka-dev-voluble-connector
+  namespace: kafka-dev
+spec:
+  class: io.mdrogalis.voluble.VolubleSourceConnector
+  config:
+    genkp.customers.with: "#{Internet.uuid}"
+    genv.customers.name.with: "#{HitchhikersGuideToTheGalaxy.character}"
+    genv.customers.email.with: "#{Internet.emailAddress}"
+    genv.customers.location->city.with: "#{HitchhikersGuideToTheGalaxy.location}"
+    genv.customers.location->planet.with: "#{HitchhikersGuideToTheGalaxy.planet}"
+    topic.customers.records.exactly: 100
+    genkp.transactions.with: "#{Internet.uuid}"
+    genv.transactions.customer_id.matching: "customers.key"
+    genv.transactions.cost.with: "#{Commerce.price}"
+    genv.transactions.card_type.with: "#{Business.creditCardType}"
+    genv.transactions.item.with: "#{Beer.name}"
+    topic.transactions.throttle.ms: 500
+    topic.transactions.records.exactly: 100

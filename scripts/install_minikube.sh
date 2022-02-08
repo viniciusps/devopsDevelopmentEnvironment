@@ -26,10 +26,12 @@ export MINIKUBE_HOME=$HOME
 export CHANGE_MINIKUBE_NONE_USER=true
 export KUBECONFIG=$HOME/.kube/config
 
+ip=$(ifconfig  eth1 | grep "inet "  | awk '{print $2}')
+
 cat << EOF > /home/vagrant/start_minikube.sh
 #!/bin/bash
 
-sudo -E minikube start -v 4 --memory=6g --cpus=4 --vm-driver none --kubernetes-version v${KUBERNETES_VERSION} --bootstrapper kubeadm 2>/dev/null
+sudo -E minikube start -v 4 --memory=6g --cpus=4 --vm-driver none --kubernetes-version v${KUBERNETES_VERSION} --bootstrapper kubeadm --insecure-registry="registry.${ip}.nip.io"  2>/dev/null
 
 # Permissions
 sudo chown -R $USER:$USER $HOME/.kube

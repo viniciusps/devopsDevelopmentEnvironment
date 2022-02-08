@@ -9,9 +9,9 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   syncPolicy:
-    syncOptions:
-      - ApplyOutOfSyncOnly=true
-      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
   source:
     repoURL: https://akhq.io/
     chart: akhq
@@ -26,7 +26,7 @@ spec:
           paths:
             - /
           hosts:
-            - kafka-dashboard.INGRESS_IP
+            - kafka-dashboard.INGRESS_IP.nip.io
         
         extraEnv:
         - name: JAVA_OPTS

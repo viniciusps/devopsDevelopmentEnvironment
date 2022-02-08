@@ -71,8 +71,18 @@ spec:
       transaction.state.log.min.isr: 1
       default.replication.factor: 1
       min.insync.replicas: 1
+    template:
+      pod:
+        securityContext:
+          runAsUser: 0
+          fsGroup: 0
   zookeeper:
     replicas: 3
+    template:
+      pod:
+        securityContext:
+          runAsUser: 0
+          fsGroup: 0
     storage:
       type: persistent-claim
       size: 1Gi
@@ -159,6 +169,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   name: hip-topic
+  namespace: kafka-dev
   labels:
     strimzi.io/cluster: "kafka-dev-cluster"
 spec:
@@ -171,6 +182,13 @@ kubectl apply -f kafka-topic.yaml
 sudo apt-get update && sudo apt-get install kafkacat -y 
 
 sleep 30
+
+#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -addext "subjectAltName = DNS:registry.172.28.128.32.nip.io" -subj '/O=My Company Name LTD./C=US'
+
+#kubectl -n argocd create secret tls registry-tls --key="tls.key" --cert="tls.crt"
+
+kubectl -n kafka-dev create secret generic docker-creds --from-file=.dockerconfigjson=/home/vagrant/.docker/config.json --type=kubernetes.io/dockerconfigjson
+
 
 # BROKER_PORT=$(kubectl get svc -n kafka-dev | grep kafka-dev-cluster-kafka-0 | awk '{print $5}' | cut -d: -f2|cut -d/ -f1)
 

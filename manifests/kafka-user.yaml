@@ -1,0 +1,18 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: kafka-dev-connect
+  namespace: kafka-dev
+  labels:
+    strimzi.io/cluster: kafka-dev-cluster
+spec:
+  authentication:
+    type: tls
+  # authorization:
+  #   acls:
+  #     - operation: All
+  #       resource:
+  #         name: '*'
+  #         patternType: literal
+  #         type: topic
+  #   type: simple
