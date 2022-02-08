@@ -4,6 +4,7 @@ metadata:
   name: customers
   labels:
     strimzi.io/cluster: "kafka-dev-cluster"
+  namespace: kafka-dev
 spec:
   partitions: 3
   replicas: 1
