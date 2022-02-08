@@ -61,13 +61,15 @@ kubectl apply -f manifests/kafka-cluster.yaml
 
 sed -i -e s/INGRESS_IP/$MINIKUBE_IP/ manifests/kafka-dashboard.yaml 
 
+sleep 120
+
 kubectl apply -f manifests/kafka-dashboard.yaml 
 
 kubectl apply -f manifests/kafka-topic.yaml
 
-if [ -f ~/.docker/config.json ]; then
+if [ -f $USER/.docker/config.json ]; then
   echo "Creating docker secret from local docker credentials file"
-  kubectl -n kafka-dev create secret generic docker-creds --from-file=.dockerconfigjson=~/.docker/config.json --type=kubernetes.io/dockerconfigjson
+  kubectl -n kafka-dev create secret generic docker-creds --from-file=.dockerconfigjson=$USER/.docker/config.json --type=kubernetes.io/dockerconfigjson
 fi
 
 ## Demo commands
