@@ -3,7 +3,7 @@
 KUBERNETES_VERSION=1.20.9
 
 echo "Starting up minikube..."
-minikube start -v 4 --memory=6g --cpus=4 --vm-driver none --kubernetes-version v${KUBERNETES_VERSION} --bootstrapper kubeadm  2>/dev/null
+minikube start -v 4 --memory=6g --cpus=4 --vm-driver hyperkit --kubernetes-version v${KUBERNETES_VERSION} --bootstrapper kubeadm
 
 sleep 20
 
@@ -53,17 +53,17 @@ kubectl create ns kafka-dev
 
 kubectl  -n kafka-system create -f https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.27.1/strimzi-crds-0.27.1.yaml
 
-kubectl apply -f kafka-operator.yaml
+kubectl apply -f manifests/kafka-operator.yaml
 
 sleep 30
 
-kubectl apply -f kafka-cluster.yaml
+kubectl apply -f manifests/kafka-cluster.yaml
 
-sed -i -e s/INGRESS_IP/$MINIKUBE_IP/ kafka-dashboard.yaml 
+sed -i -e s/INGRESS_IP/$MINIKUBE_IP/ manifests/kafka-dashboard.yaml 
 
-kubectl apply -f kafka-dashboard.yaml 
+kubectl apply -f manifests/kafka-dashboard.yaml 
 
-kubectl apply -f kafka-topic.yaml
+kubectl apply -f manifests/kafka-topic.yaml
 
 if [ -f ~/.docker/config.json ]; then
   echo "Creating docker secret from local docker credentials file"
